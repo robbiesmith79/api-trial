@@ -1,0 +1,29 @@
+<h1>Products</h1>
+<div class="button-row">
+  <input type="button" (click)="isModalVisible = true" class="btn btn-primary" value="Add Product"  />
+</div>
+<clr-datagrid>
+  <clr-dg-column [clrDgField]="'Name'">Name</clr-dg-column>
+  <clr-dg-column [clrDgField]="'Description'">Description</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let product of products">
+    <clr-dg-cell>{{product.Name}}</clr-dg-cell>
+    <clr-dg-cell>{{product.Description}}</clr-dg-cell>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+    of {{pagination.totalItems}} products
+    <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+  </clr-dg-footer>
+
+</clr-datagrid>
+
+  <clr-modal [(clrModalOpen)]="isModalVisible">
+      <h3 class="modal-title">Delete order?</h3>
+      <div class="modal-body">This cannot be undone.</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="isModalVisible = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="deleteOrder()">Delete</button>
+      </div>
+    </clr-modal>
