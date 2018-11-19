@@ -1,4 +1,17 @@
 <h1>Hello Categories!</h1>
-<div *ngFor="let category of categories">
-  {{category.CategoryId}}, {{category.Name}}
-</div>
+<clr-datagrid>
+    <clr-dg-column [clrDgField]="'CategoryId'">CategoryId</clr-dg-column>
+    <clr-dg-column [clrDgField]="'Name'">Name</clr-dg-column>
+  
+    <clr-dg-row *clrDgItems="let category of categories">
+      <clr-dg-cell>{{category.CategoryId}}</clr-dg-cell>
+      <clr-dg-cell>{{category.Name}}</clr-dg-cell>
+    </clr-dg-row>
+  
+    <clr-dg-footer>
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+      of {{pagination.totalItems}} categories
+      <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
+    </clr-dg-footer>
+  
+  </clr-datagrid>

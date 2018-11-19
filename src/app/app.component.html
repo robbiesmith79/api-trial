@@ -1,14 +1,14 @@
 <div class="main-container">
   <header class="header header-6">
     <div class="branding">
-        <a href="/" class="nav-link">
-            <span class="title">API Trial</span>
-        </a>
+        
+        <span class="title">API Trial</span>
+        
     </div>
-    <div class="header-nav">
-        <a routerLink="/" class="active nav-link"><span class="nav-text">Home</span></a>
-        <a href="/categories" class="nav-link"><span class="nav-text">Categories</span></a>
-        <a href="/products" class="nav-link"><span class="nav-text">Products</span></a>
+    <div class="header-nav" [clr-nav-level]="1">
+        <a class="nav-link" href="#" [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><span class="nav-text">Home</span></a>
+        <a class="nav-link" href="#" [routerLink]="['/categories']" routerLinkActive="active"><span class="nav-text">Categories</span></a>
+        <a class="nav-link" href="#" [routerLink]="['/products']" routerLinkActive="active"><span class="nav-text">Products</span></a>
     </div>
   </header>
   

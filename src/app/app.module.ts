@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, RouterLinkActive } from '@angular/router';
 import { AppComponent } from './app.component';
 import { CategoriesModule } from './categories/categories.module';
 import { CategoriesComponent } from './categories/categories.component';
@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { ProductsModule } from './products/products.module';
 import { ProductsComponent } from './products/products.component';
 import { ClarityModule } from '@clr/angular';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -38,9 +39,9 @@ const appRoutes: Routes = [
     HttpClientModule,
     BrowserModule,
     ClarityModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: true } // <-- debugging purposes only
+      appRoutes
     ), 
     CategoriesModule,
     ProductsModule
@@ -49,4 +50,6 @@ const appRoutes: Routes = [
   providers: [HttpModule],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+
+}

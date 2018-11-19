@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from "../services/api.service";
-import { Category } from '../services/category';
+import { Category } from '../services/dataModels';
 
 @Component({
   selector: 'app-categories',
@@ -17,6 +17,7 @@ export class CategoriesComponent implements OnInit {
 
   public categories: any[] = new Array<Category>();
 
+  // get all categories from the API
   listCategories() {
     this.api.get("Categories").subscribe(
       categories => {

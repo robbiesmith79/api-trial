@@ -5,25 +5,124 @@
 <clr-datagrid>
   <clr-dg-column [clrDgField]="'Name'">Name</clr-dg-column>
   <clr-dg-column [clrDgField]="'Description'">Description</clr-dg-column>
-
   <clr-dg-row *clrDgItems="let product of products">
+    <clr-dg-action-overflow>
+        <button class="action-item" (click)="onView(product); ">View</button>
+        <button class="action-item" (click)="onEdit(product); ">Edit</button>
+        <button class="action-item" (click)="onDelete(product)" disabled>Delete</button>
+    </clr-dg-action-overflow>
     <clr-dg-cell>{{product.Name}}</clr-dg-cell>
     <clr-dg-cell>{{product.Description}}</clr-dg-cell>
   </clr-dg-row>
-
   <clr-dg-footer>
     {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
     of {{pagination.totalItems}} products
     <clr-dg-pagination #pagination [clrDgPageSize]="50"></clr-dg-pagination>
   </clr-dg-footer>
-
 </clr-datagrid>
 
-  <clr-modal [(clrModalOpen)]="isModalVisible">
-      <h3 class="modal-title">Delete order?</h3>
-      <div class="modal-body">This cannot be undone.</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" (click)="isModalVisible = false">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="deleteOrder()">Delete</button>
+<!-- View product modal (Yes I know this is just one way to view the data) -->
+<clr-modal [(clrModalOpen)]="isViewModalVisible" [clrModalClosable]="false">
+  <div class="modal-body">
+      <h1>{{currentProd.Name}}</h1>
+      <p>{{currentProd.Description}}</p>
+      <p><a href="{{currentProd.Url}}" target="_blank">{{currentProd.Url}}</a></p>
+      <h2>Categories</h2>
+      <ul>
+          <li *ngFor="let category of currentProd.Categories">{{category.Name}}</li>            
+      </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="isViewModalVisible = false">Cancel</button>
+  </div>
+</clr-modal>
+
+<!-- new product modal -->
+<clr-modal [(clrModalOpen)]="isModalVisible">
+  <h3 class="modal-title">New Product</h3>
+  <div class="modal-body">
+    <div [hidden]="submitted">
+      <form (ngSubmit)="addProduct()">
+        <div class="form-group">
+          <label for="Name">Product Name</label>
+          <input type="text" class="form-control" id="Name" required [(ngModel)]="product.Name" name="Name" maxlength="50">
+        </div>        
+        <div class="form-group">
+          <label for="Description">Description</label>
+          <input type="text" class="form-control" id="Description" required [(ngModel)]="product.Description" name="Description" maxlength="200">
+        </div>        
+        <div class="form-group">
+          <label for="Url">Url</label>
+          <input type="text" class="form-control" id="Url" [(ngModel)]="product.Url" name="Url" maxlength="500">
+        </div>
+        <div class="form-group">
+            <label>Categories</label>
+            <div class="checkbox trimmed" *ngFor="let category of categories;let i = index ">
+                <input type="checkbox" id="checkrads_{{i}}" name="{{category.Name}}" value="{{category.CategoryId}}" [(ngModel)]="category.checked" >
+                <label for="checkrads_{{i}}">{{category.Name}}</label>
+            </div>
+        </div>
+        <div class="btn-group" style="text-align:right;">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div [hidden]="!submitted">
+      <div class="btn-group ">
+          <h4>You submitted successfully!</h4>
       </div>
-    </clr-modal>
+    </div>
+  </div>
+  <div class="modal-footer" [hidden]="!submitted">
+    <button type="button" class="btn btn-default" (click)="isModalVisible = false">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="isModalVisible = false; resetForm()">Ok</button>
+  </div>
+</clr-modal>
+
+<!-- edit product modal -->
+<clr-modal [(clrModalOpen)]="isEditModalVisible" [clrModalClosable]="false">
+    <div class="modal-header">
+      <button aria-label="Close" class="close" type="button" (click)="resetForm()">
+          <clr-icon aria-hidden="true" shape="close"></clr-icon>
+      </button>
+      <h3 class="modal-title">Edit Product</h3>
+    </div>
+    <div class="modal-body">
+      <div [hidden]="submitted">
+        <form (ngSubmit)="updateProduct()">
+          <div class="form-group">
+            <label for="Name">Product Name</label>
+            <input type="text" class="form-control" id="Name" required [(ngModel)]="currentProd.Name" name="Name" maxlength="50">
+          </div>
+          <div class="form-group">
+            <label for="Description">Description</label>
+            <input type="text" class="form-control" id="Description" required [(ngModel)]="currentProd.Description" name="Description" maxlength="200">
+          </div>
+          <div class="form-group">
+            <label for="Url">Url</label>
+            <input type="text" class="form-control" id="Url" [(ngModel)]="currentProd.Url" name="Url" maxlength="500">
+          </div>
+          <div class="form-group">
+              <label>Categories</label>
+              <div class="checkbox trimmed" *ngFor="let category of categories;let i = index ">
+                  <input type="checkbox" id="checkrads_{{i}}" name="{{category.Name}}" value="{{category.CategoryId}}" [(ngModel)]="category.checked" >
+                  <label for="checkrads_{{i}}">{{category.Name}}</label>
+              </div>
+          </div>
+          <div class="btn-group" style="float:right;">
+            <button type="button" class="btn btn-default" (click)="isEditModalVisible = false; resetForm()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>          
+      <div [hidden]="!submitted">
+        <div class="btn-group ">
+            <h4>You submitted successfully!</h4>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" [hidden]="!submitted">
+      <button type="button" class="btn btn-default" (click)="isEditModalVisible = false">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="isEditModalVisible = false; resetForm()">Ok</button>
+    </div>
+  </clr-modal>
