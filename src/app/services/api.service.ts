@@ -1,15 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
-import { Http, HttpModule, Response } from "@angular/http";
 import { Observable, throwError } from 'rxjs';
-import { Category } from "./dataModels";
-import { catchError, retry } from 'rxjs/operators';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { catchError } from 'rxjs/operators';
 import { appApiResources } from "../app.constants";
-import * as jwt_decode from 'jwt-decode';
-
-export const TOKEN_NAME: string = appApiResources.JWT;
 
 @Injectable({
   providedIn: 'root'
@@ -24,17 +17,12 @@ export class ApiService {
 
   constructor(private http: HttpClient ) { }
 
-  // the actual JWT token
-  public token: string = TOKEN_NAME;
- 
-  // the token expiration boolean
-  public token_expires: boolean = this.isTokenExpired();
- 
   // for generic requests
   get(route: string): Observable<any> {
     return this.http.get(appApiResources.API_ENDPOINT + route,{headers: this.headers});
   }
 
+  /* grab the individual product and return an observable */
   getProduct(productId: number): Observable<any> {
     return this.http.get(appApiResources.API_ENDPOINT + 'Products/' + productId,{headers: this.headers});
   }
@@ -55,7 +43,7 @@ export class ApiService {
       ).subscribe(); // the post back from the api will not return the categoryids, just the basic product information like name, desc, url
   }
 
-  
+  /* put request to the swagger api. build the data model and attach the headers */
   put(route: string, data: any) {
     var packagedData = {"Name":"","Description":"","Url":"","CategoryIds":[]};
     packagedData.CategoryIds = data.categories;
@@ -68,32 +56,7 @@ export class ApiService {
       ).subscribe(); // the post back from the api will not return the categoryids, just the basic product information like name, desc, url 
   }
 
-  getToken() {
-    return appApiResources.JWT;
-  }
-
-  //for testing purposes
-  getTokenExpirationDate(token: string): Date {
-    const decoded = jwt_decode(token);
-
-    if (decoded.exp === undefined) return null;
-
-    const date = new Date(0); 
-    date.setUTCSeconds(decoded.exp);
-    return date;
-  }
-
-  //for testing purposes
-  isTokenExpired(token?: string): boolean {
-    if(!token) token = this.getToken();
-    if(!token) return true;
-
-    const date = this.getTokenExpirationDate(token);
-    if(date === undefined) return false;
-    return !(date.valueOf() > new Date().valueOf());
-  }
-
-
+  /* more robust error reporting */
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
